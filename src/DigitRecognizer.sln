@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DigitRecognizer", "DigitRecognizer\DigitRecognizer.csproj", "{DCF74F9A-7B4B-420E-B3B0-6FC5E4DCE1AF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimplePerceptron", "SimplePerceptron\src\SimplePerceptron\SimplePerceptron.csproj", "{5C562D76-7E7B-471A-B277-5242F3BBB61A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimplePerceptron", "..\SimplePerceptron\src\SimplePerceptron\SimplePerceptron.csproj", "{5C562D76-7E7B-471A-B277-5242F3BBB61A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

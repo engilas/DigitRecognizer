@@ -112,7 +112,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SimplePerceptron\src\SimplePerceptron\SimplePerceptron.csproj">
+    <ProjectReference Include="..\..\SimplePerceptron\src\SimplePerceptron\SimplePerceptron.csproj">
       <Project>{5c562d76-7e7b-471a-b277-5242f3bbb61a}</Project>
       <Name>SimplePerceptron</Name>
     </ProjectReference>

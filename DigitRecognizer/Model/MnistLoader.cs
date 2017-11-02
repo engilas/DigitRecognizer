@@ -1,43 +1,57 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows;
+using SimplePerceptron.Trains;
 
 namespace DigitRecognizer.Model
 {
-    public class MnistLoader
+    class MnistLoader
     {
         private readonly string _trainsFilePath;
-        private readonly string _labelsFilePath;
+        private readonly string _trainsLabelsFilePath;
 
-        public MnistLoader(string trainsFilePath, string labelsFilePath)
+        private readonly string _testFilePath;
+        private readonly string _testTrainsLabelsFilePath;
+        private readonly ITrainSetConstructor _trainConstructor;
+
+        private readonly DigitImage[] _trainImages;
+        private readonly DigitImage[] _testImages;
+
+        public int Width { get; private set; }
+        public int Height { get; private set; }
+        public const int CategoryCount = 10;
+
+        public MnistLoader(string trainsFilePath, string labelsFilePath, string testFilePath, string testTrainsLabelsFilePath, ITrainSetConstructor trainConstructor)
         {
             _trainsFilePath = trainsFilePath;
-            _labelsFilePath = labelsFilePath;
+            _trainsLabelsFilePath = labelsFilePath;
+            _testTrainsLabelsFilePath = testTrainsLabelsFilePath;
+            _trainConstructor = trainConstructor;
+            _testFilePath = testFilePath;
+
+            _trainImages = ReadData(_trainsFilePath, _trainsLabelsFilePath);
+            _testImages = ReadData(_testFilePath, _testTrainsLabelsFilePath);
         }
 
-        public TrainSet[] GeTrainSets()
+        public TrainSet[] GetTrainSets()
         {
-            
+            return _trainImages.Select(x => _trainConstructor.CreateSet(x.Bytes, x.Label, CategoryCount)).ToArray();
         }
-    
 
-        public static DigitImage[] LoadData(string pixelFile, string labelFile)
+        public DigitImage GetTestImage(int index) => _testImages[index];
+        public int TestCount => _testImages.Length;
+        public int TrainCount => _trainImages.Length;
+
+        private DigitImage[] ReadData(string imagesPath, string labelsPath)
         {
-            int numImages = 60000;
-            DigitImage[] result = new DigitImage[numImages];
-            byte[][] pixels = new byte[28][];
-            for (int i = 0; i < pixels.Length; ++i)
-                pixels[i] = new byte[28];
-            FileStream ifsPixels = new FileStream(pixelFile, FileMode.Open);
-            FileStream ifsLabels = new FileStream(labelFile, FileMode.Open);
-            BinaryReader brImages = new BinaryReader(ifsPixels);
-            BinaryReader brLabels = new BinaryReader(ifsLabels);
-            int magic1 = brImages.ReadInt32(); // обратный порядок байтов
-            magic1 = ReverseBytes(magic1); // преобразуем в формат Intel
+            var datasetStream = Application.GetResourceStream(new Uri(imagesPath)).Stream;
+            var labelsStream = Application.GetResourceStream(new Uri(labelsPath)).Stream;
+            BinaryReader brImages = new BinaryReader(datasetStream);
+            BinaryReader brLabels = new BinaryReader(labelsStream);
+
+            int magic1 = brImages.ReadInt32(); 
+            magic1 = ReverseBytes(magic1);
             int imageCount = brImages.ReadInt32();
             imageCount = ReverseBytes(imageCount);
             int numRows = brImages.ReadInt32();
@@ -48,50 +62,42 @@ namespace DigitRecognizer.Model
             magic2 = ReverseBytes(magic2);
             int numLabels = brLabels.ReadInt32();
             numLabels = ReverseBytes(numLabels);
-            for (int di = 0; di < numImages; ++di)
+
+            Width = numCols;
+            Height = numRows;
+
+
+            byte[][] image = new byte[numCols][];
+            for (int i = 0; i < numCols; ++i)
             {
-                for (int i = 0; i < 28; ++i) // получаем пиксельные
-                                             // значения 28x28
+                image[i] = new byte[numRows];
+            }
+            var digitImages = new DigitImage[imageCount];
+            
+            for (int imageNum = 0; imageNum < imageCount; ++imageNum)
+            {
+                for (int i = 0; i < numCols; ++i) 
+                for (int j = 0; j < numRows; ++j)
                 {
-                    for (int j = 0; j < 28; ++j)
-                    {
-                        byte b = brImages.ReadByte();
-                        pixels[i][j] = b;
-                    }
+                    image[i][j] = brImages.ReadByte();
                 }
-                byte lbl = brLabels.ReadByte(); // получаем маркеры
-                DigitImage dImage = new DigitImage(28, 28, pixels, lbl);
-                result[di] = dImage;
-            } // по каждому изображению
-            ifsPixels.Close(); brImages.Close();
-            ifsLabels.Close(); brLabels.Close();
-            return result;
+
+                var label = brLabels.ReadByte();
+                digitImages[imageNum] = new DigitImage(numCols, numRows, image, label);
+            }
+            datasetStream.Close();
+            brImages.Close();
+            labelsStream.Close();
+            brLabels.Close();
+
+            return digitImages;
         }
 
-        public static int ReverseBytes(int v)
+        private int ReverseBytes(int v)
         {
             byte[] intAsBytes = BitConverter.GetBytes(v);
             Array.Reverse(intAsBytes);
             return BitConverter.ToInt32(intAsBytes, 0);
-        }
-
-        public static Bitmap MakeBitmap(DigitImage dImage, int mag)
-        {
-            int width = dImage.width * mag;
-            int height = dImage.height * mag;
-            Bitmap result = new Bitmap(width, height);
-            Graphics gr = Graphics.FromImage(result);
-            for (int i = 0; i < dImage.height; ++i)
-            {
-                for (int j = 0; j < dImage.width; ++j)
-                {
-                    int pixelColor = 255 - dImage.pixels[i][j]; // Черные цифры
-                    Color c = Color.FromArgb(pixelColor, pixelColor, pixelColor);
-                    SolidBrush sb = new SolidBrush(c);
-                    gr.FillRectangle(sb, j * mag, i * mag, mag, mag);
-                }
-            }
-            return result;
         }
     }
 }

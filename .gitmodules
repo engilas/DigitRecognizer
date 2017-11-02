@@ -1,0 +1,3 @@
+[submodule "SimplePerceptron"]
+	path = SimplePerceptron
+	url = https://github.com/engilas/SimplePerceptron.git

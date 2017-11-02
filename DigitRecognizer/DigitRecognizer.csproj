@@ -34,6 +34,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -55,7 +58,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="MainWindow.xaml">
+    <Page Include="View\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -63,14 +66,21 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="ViewModel\MainViewModel.cs" />
+    <Compile Include="View\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\BitmapPainter.cs" />
+    <Compile Include="Model\NetworkCreator.cs" />
+    <Compile Include="Model\TrainSetConstructor.cs" />
     <Compile Include="Model\DigitImage.cs" />
+    <Compile Include="Model\ITrainSetConstructor.cs" />
+    <Compile Include="Model\ITrainImage.cs" />
     <Compile Include="Model\MnistLoader.cs" />
+    <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -88,6 +98,11 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <Resource Include="DataSets\t10k-images.idx3-ubyte" />
+    <Resource Include="DataSets\t10k-labels.idx1-ubyte" />
+    <Resource Include="DataSets\train-images.idx3-ubyte" />
+    <Resource Include="DataSets\train-labels.idx1-ubyte" />
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -97,8 +112,8 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\SimplePerceptron\src\SimplePerceptron\SimplePerceptron.csproj">
-      <Project>{e497752d-2694-4928-8a15-a2bb246dd094}</Project>
+    <ProjectReference Include="..\SimplePerceptron\src\SimplePerceptron\SimplePerceptron.csproj">
+      <Project>{5c562d76-7e7b-471a-b277-5242f3bbb61a}</Project>
       <Name>SimplePerceptron</Name>
     </ProjectReference>
   </ItemGroup>

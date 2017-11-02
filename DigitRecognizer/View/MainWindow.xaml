@@ -1,0 +1,59 @@
+﻿<Window x:Class="DigitRecognizer.View.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DigitRecognizer"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="517" Width="722.074">
+    <Grid>
+        <Border BorderThickness="1" BorderBrush="Black"  Margin="10,10,0,0" VerticalAlignment="Top" Height="466" Width="203" HorizontalAlignment="Left">
+            <TextBox x:Name="Logs"
+                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                ScrollViewer.VerticalScrollBarVisibility="Auto" 
+                IsReadOnly="True" TextWrapping="Wrap" 
+                Text="{Binding ErrorLog, Mode=OneWay}" TextChanged="Logs_TextChanged" />
+        </Border>
+
+        <Button Content="Start" HorizontalAlignment="Left" Margin="232,10,0,0" VerticalAlignment="Top" Width="75" Click="Button_Start"/>
+        <Button Content="Stop" HorizontalAlignment="Left" Margin="312,10,0,0" VerticalAlignment="Top" Width="75" Click="Button_Stop"/>
+
+        <TextBox HorizontalAlignment="Left" Height="23" Margin="351,85,0,0" TextWrapping="Wrap" Text="{Binding LearnSpeed}" VerticalAlignment="Top" Width="120"/>
+        <TextBlock HorizontalAlignment="Left" Margin="271,86,0,0" TextWrapping="Wrap" Text="Learn speed" VerticalAlignment="Top" Height="22"/>
+        <TextBox HorizontalAlignment="Left" Height="23" Margin="351,112,0,0" TextWrapping="Wrap" Text="{Binding Moment}" VerticalAlignment="Top" Width="120"/>
+        <TextBlock HorizontalAlignment="Left" Margin="271,113,0,0" TextWrapping="Wrap" Text="Moment" VerticalAlignment="Top" Height="22"/>
+        <TextBox HorizontalAlignment="Left" Height="23" Margin="351,139,0,0" TextWrapping="Wrap" Text="{Binding ReluCoeff}" VerticalAlignment="Top" Width="120"/>
+        <TextBlock HorizontalAlignment="Left" Margin="271,140,0,0" TextWrapping="Wrap" Text="Relu coeff" VerticalAlignment="Top" Height="22"/>
+        <Button Content="Update" HorizontalAlignment="Left" Margin="351,178,0,0" VerticalAlignment="Top" Width="75" Click="Button_Update"/>
+
+        <Border BorderThickness="1" BorderBrush="Black"  HorizontalAlignment="Left" Height="112" Margin="271,269,0,0" VerticalAlignment="Top" Width="112" >
+            <Image Source="{Binding Image}" />
+        </Border>
+        <Border BorderThickness="1" BorderBrush="Black"  HorizontalAlignment="Left" Height="112" Margin="548,269,0,0" VerticalAlignment="Top" Width="112">
+            <Image Source="{Binding PaintImage}" MouseMove="Image_MouseMove" />
+        </Border>
+        <TextBox HorizontalAlignment="Left" Height="23" Margin="271,211,0,0" TextWrapping="Wrap" Text="{Binding SelectedImageIndex}" VerticalAlignment="Top" Width="75"/>
+        <TextBlock HorizontalAlignment="Left" Margin="230,212,0,0" TextWrapping="Wrap" Text="Index:" VerticalAlignment="Top" Height="22"/>
+        <TextBlock HorizontalAlignment="Left" Margin="351,212,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="22">
+            <TextBlock.Text>
+                <MultiBinding StringFormat="{}Of {0}">
+                    <Binding Path="TestCount" />
+                </MultiBinding>
+            </TextBlock.Text>
+        </TextBlock>
+        <Button Content="Clear" HorizontalAlignment="Left" Margin="584,238,0,0" VerticalAlignment="Top" Width="45" Click="Button_Clear" Height="26"/>
+        <Button Content="Recognize" HorizontalAlignment="Left" Margin="271,409,0,0" VerticalAlignment="Top" Width="100" Click="Button_Recognize" Height="26"/>
+        <Button Content="&gt;&gt;" HorizontalAlignment="Left" Margin="351,244,0,0" VerticalAlignment="Top" Width="40" Click="Button_Next"/>
+        <Button Content="&lt;&lt;" HorizontalAlignment="Left" Margin="271,244,0,0" VerticalAlignment="Top" Width="40" Click="Button_Prev"/>
+        <TextBlock TextAlignment="Center" HorizontalAlignment="Left" Margin="392,394,0,0" TextWrapping="Wrap" Text="{Binding RecognizeResult}" VerticalAlignment="Top" Height="82" Width="133"/>
+        <Button Content="Reset weights" HorizontalAlignment="Left" Margin="392,10,0,0" VerticalAlignment="Top" Width="79" Click="Button_Reset"/>
+        <Button Content="Save" HorizontalAlignment="Left" Margin="615,55,0,0" VerticalAlignment="Top" Width="75" Click="Button_Save"/>
+        <Button Content="Recognize" HorizontalAlignment="Left" Margin="560,409,0,0" VerticalAlignment="Top" Width="100" Click="Button_RecognizePaint" Height="26"/>
+        <Button Content="Load" HorizontalAlignment="Left" Margin="615,80,0,0" VerticalAlignment="Top" Width="75" Click="Button_Load"/>
+        <Button Content="Create Default" HorizontalAlignment="Left" Margin="584,10,0,0" VerticalAlignment="Top" Width="106" Click="Button_CreateDefault"/>
+        <ProgressBar Maximum="{Binding TrainSetCount, Mode=OneWay}" Value="{Binding TrainProgressValue, Mode=OneWay}" HorizontalAlignment="Left" Height="11" Margin="232,64,0,0" VerticalAlignment="Top" Width="239"/>
+        <TextBlock HorizontalAlignment="Left" TextAlignment="Center" Margin="230,45,0,0" TextWrapping="Wrap" Text="Learn dataset progress" VerticalAlignment="Top" Width="241"/>
+
+
+    </Grid>
+</Window>

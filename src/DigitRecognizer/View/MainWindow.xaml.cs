@@ -91,5 +91,10 @@ namespace DigitRecognizer.View
         {
             _viewModel.CreateDefaultNetwork();
         }
+
+        private void Button_CalcError(object sender, RoutedEventArgs e)
+        {
+            _viewModel.CalcTestSetError();
+        }
     }
 }

@@ -20,7 +20,8 @@ namespace DigitRecognizer.Model
 
         public int Width { get; private set; }
         public int Height { get; private set; }
-        public const int CategoryCount = 10;
+        public int InputCount => Width * Height;
+        public readonly int CategoryCount = 10;
 
         public MnistLoader(string trainsFilePath, string labelsFilePath, string testFilePath, string testTrainsLabelsFilePath, ITrainSetConstructor trainConstructor)
         {
@@ -37,6 +38,11 @@ namespace DigitRecognizer.Model
         public TrainSet[] GetTrainSets()
         {
             return _trainImages.Select(x => _trainConstructor.CreateSet(x.Bytes, x.Label, CategoryCount)).ToArray();
+        }
+
+        public TrainSet[] GetTestSets()
+        {
+            return _testImages.Select(x => _trainConstructor.CreateSet(x.Bytes, x.Label, CategoryCount)).ToArray();
         }
 
         public DigitImage GetTestImage(int index) => _testImages[index];

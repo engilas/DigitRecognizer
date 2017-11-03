@@ -45,7 +45,7 @@
         <Button Content="Recognize" HorizontalAlignment="Left" Margin="271,409,0,0" VerticalAlignment="Top" Width="100" Click="Button_Recognize" Height="26"/>
         <Button Content="&gt;&gt;" HorizontalAlignment="Left" Margin="351,244,0,0" VerticalAlignment="Top" Width="40" Click="Button_Next"/>
         <Button Content="&lt;&lt;" HorizontalAlignment="Left" Margin="271,244,0,0" VerticalAlignment="Top" Width="40" Click="Button_Prev"/>
-        <TextBlock TextAlignment="Center" HorizontalAlignment="Left" Margin="392,394,0,0" TextWrapping="Wrap" Text="{Binding RecognizeResult}" VerticalAlignment="Top" Height="82" Width="133"/>
+        <TextBlock TextAlignment="Center" HorizontalAlignment="Left" Margin="392,394,0,0" TextWrapping="Wrap" Text="{Binding Output}" VerticalAlignment="Top" Height="82" Width="133"/>
         <Button Content="Reset weights" HorizontalAlignment="Left" Margin="392,10,0,0" VerticalAlignment="Top" Width="79" Click="Button_Reset"/>
         <Button Content="Save" HorizontalAlignment="Left" Margin="615,55,0,0" VerticalAlignment="Top" Width="75" Click="Button_Save"/>
         <Button Content="Recognize" HorizontalAlignment="Left" Margin="560,409,0,0" VerticalAlignment="Top" Width="100" Click="Button_RecognizePaint" Height="26"/>
@@ -53,6 +53,8 @@
         <Button Content="Create Default" HorizontalAlignment="Left" Margin="584,10,0,0" VerticalAlignment="Top" Width="106" Click="Button_CreateDefault"/>
         <ProgressBar Maximum="{Binding TrainSetCount, Mode=OneWay}" Value="{Binding TrainProgressValue, Mode=OneWay}" HorizontalAlignment="Left" Height="11" Margin="232,64,0,0" VerticalAlignment="Top" Width="239"/>
         <TextBlock HorizontalAlignment="Left" TextAlignment="Center" Margin="230,45,0,0" TextWrapping="Wrap" Text="Learn dataset progress" VerticalAlignment="Top" Width="241"/>
+        <TextBlock HorizontalAlignment="Left" Margin="488,308,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="22"><Run Text="Paint Here"/><LineBreak/><Run/></TextBlock>
+        <Button Content="Test set error" HorizontalAlignment="Left" Margin="429,244,0,0" VerticalAlignment="Top" Width="75" Click="Button_CalcError"/>
 
 
     </Grid>

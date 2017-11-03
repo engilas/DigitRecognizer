@@ -22,6 +22,7 @@ namespace DigitRecognizer.ViewModel
         private NetworkTeacher _teacher;
         private readonly NetworkCreator _networkCreator;
         private readonly MnistLoader _loader;
+        private NetworkRecognizer _networkRecognizer;
         private int _selectedImageIndex;
         private string _recognizeResult;
         private readonly BitmapPainter _painter;
@@ -53,7 +54,7 @@ namespace DigitRecognizer.ViewModel
 
         public int TrainProgressValue => _teacher?.CurrentDataSet ?? 0;
 
-        public string RecognizeResult
+        public string Output
         {
             get { return _recognizeResult; }
             set
@@ -105,13 +106,11 @@ namespace DigitRecognizer.ViewModel
 
         public void CreateDefaultNetwork()
         {
-            var trainSets = _loader.GetTrainSets();
-            var inputCount = trainSets[0].InputCount;
-            var outputCount = trainSets[0].OutputCount;
+            var inputCount = _loader.InputCount;
+            var outputCount = _loader.CategoryCount;
 
             _network = _networkCreator.CreateDefaultNetwork(LearnSpeed, Moment, inputCount, outputCount);
-            _teacher = _networkCreator.CreateDefaultTeacher(_network, trainSets);
-            SubscribeTeacherEpochResults();
+            PostInitializeNetwork();
         }
 
         public void LoadNetwork()
@@ -123,14 +122,22 @@ namespace DigitRecognizer.ViewModel
             {
                 jsonResult = File.ReadAllText(dialog.FileName);
             }
+            else return;
 
-            var trainSets = _loader.GetTrainSets();
+           
             _network = _networkCreator.DeserializeNetwork(jsonResult);
-            _teacher = _networkCreator.CreateDefaultTeacher(_network, trainSets);
-            SubscribeTeacherEpochResults();
+            PostInitializeNetwork();
 
             LearnSpeed = _network.LearnSpeed;
             Moment = _network.Moment;
+        }
+
+        private void PostInitializeNetwork()
+        {
+            var trainSets = _loader.GetTrainSets();
+            _networkRecognizer = new NetworkRecognizer(_network);
+            _teacher = _networkCreator.CreateDefaultTeacher(_network, trainSets);
+            SubscribeTeacherEpochResults();
         }
 
         private void SubscribeTeacherEpochResults()
@@ -170,7 +177,7 @@ namespace DigitRecognizer.ViewModel
                 while (_teacher.IsLearning)
                 {
                     OnPropertyChanged(nameof(TrainProgressValue));
-                    Thread.Sleep(200);
+                    Thread.Sleep(100);
                 }
             });
         }
@@ -223,12 +230,6 @@ namespace DigitRecognizer.ViewModel
             SelectedImageIndex--;
         }
 
-        private struct RecognizeData
-        {
-            public int Value;
-            public double Percent;
-        }
-
         public void Recognize()
         {
             var image = _loader.GetTestImage(SelectedImageIndex);
@@ -255,27 +256,21 @@ namespace DigitRecognizer.ViewModel
                 return;
             }
 
-            var results = _network.Iterate(set.Input).Select(x => new RecognizeData
-            {
-                Value = 0,
-                Percent = x * 100
-            }).ToArray();
-
+            var top3 = _networkRecognizer.RecognizeSet(set).OrderByDescending(x => x.Percent).Take(3);
             string answer = "";
-
-            for (int i = 0; i < results.Length; ++i)
-            {
-                results[i].Value = i;
-            }
-
-            var top3 = results.OrderByDescending(x => x.Percent).Take(3);
-
             foreach (var result in top3)
             {
                 answer += $"{result.Value}: {result.Percent: 0.##} %\r\n";
             }
 
-            RecognizeResult = answer;
+            Output = answer;
+        }
+
+        public void CalcTestSetError()
+        {
+            if (!CheckInitialization()) return;
+            var error = _networkRecognizer.TrainSetRecognizeError(_loader.GetTestSets()) * 100;
+            Output = error.ToString("0.###") + " %";
         }
 
         public void ResetWeights()

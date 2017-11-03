@@ -71,23 +71,13 @@ namespace DigitRecognizer.Model
 
             Width = numCols;
             Height = numRows;
-
-
-            byte[][] image = new byte[numCols][];
-            for (int i = 0; i < numCols; ++i)
-            {
-                image[i] = new byte[numRows];
-            }
+            
+            byte[] image = new byte[imageCount];
             var digitImages = new DigitImage[imageCount];
             
             for (int imageNum = 0; imageNum < imageCount; ++imageNum)
             {
-                for (int i = 0; i < numCols; ++i) 
-                for (int j = 0; j < numRows; ++j)
-                {
-                    image[i][j] = brImages.ReadByte();
-                }
-
+                image = brImages.ReadBytes(numCols * numRows);
                 var label = brLabels.ReadByte();
                 digitImages[imageNum] = new DigitImage(numCols, numRows, image, label);
             }

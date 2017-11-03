@@ -106,6 +106,8 @@ namespace DigitRecognizer.ViewModel
 
         public void CreateDefaultNetwork()
         {
+            if (!CheckLearning()) return;
+
             var inputCount = _loader.InputCount;
             var outputCount = _loader.CategoryCount;
 
@@ -115,6 +117,8 @@ namespace DigitRecognizer.ViewModel
 
         public void LoadNetwork()
         {
+            if (!CheckLearning()) return;
+
             string jsonResult = null;
             var dialog = new OpenFileDialog();
             dialog.Filter = "JSON file (*.json)|*.json";
@@ -156,6 +160,7 @@ namespace DigitRecognizer.ViewModel
         public void SaveNetwork()
         {
             if (!CheckInitialization()) return;
+            if (!CheckLearning()) return;
 
             var json = _network.Serialize();
 
@@ -168,6 +173,7 @@ namespace DigitRecognizer.ViewModel
         public void StartLearning()
         {
             if (!CheckInitialization()) return;
+            if (!CheckLearning()) return;
 
             UpdateParameters();
             Task.Run(() => _teacher.Learn());
@@ -203,6 +209,16 @@ namespace DigitRecognizer.ViewModel
             if (_network == null || _teacher == null)
             {
                 MessageBox.Show("Network does not initialized");
+                return false;
+            }
+            return true;
+        }
+
+        private bool CheckLearning()
+        {
+            if (_teacher?.IsLearning == true)
+            {
+                MessageBox.Show("Network is learning now");
                 return false;
             }
             return true;
@@ -249,12 +265,7 @@ namespace DigitRecognizer.ViewModel
         private void RecognizeSet(TrainSet set)
         {
             if (!CheckInitialization()) return;
-
-            if (_teacher.IsLearning)
-            {
-                MessageBox.Show("Network is learning now");
-                return;
-            }
+            if (!CheckLearning()) return;
 
             var top3 = _networkRecognizer.RecognizeSet(set).OrderByDescending(x => x.Percent).Take(3);
             string answer = "";
@@ -269,6 +280,8 @@ namespace DigitRecognizer.ViewModel
         public void CalcTestSetError()
         {
             if (!CheckInitialization()) return;
+            if (!CheckLearning()) return;
+
             var error = _networkRecognizer.TrainSetRecognizeError(_loader.GetTestSets()) * 100;
             Output = error.ToString("0.###") + " %";
         }

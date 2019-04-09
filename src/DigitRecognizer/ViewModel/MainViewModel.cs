@@ -27,8 +27,12 @@ namespace DigitRecognizer.ViewModel
         private string _recognizeResult;
         private readonly BitmapPainter _painter;
         private readonly ITrainSetConstructor _trainCounstructor;
-        private double _learnSpeed;
-        private double _moment;
+        private double _learnSpeed = 0.3;
+        private double _moment = 0.1;
+
+        private CancellationTokenSource _learnCts;
+        private Task _learnTask;
+        private Task _progressBarTask;
 
         public double LearnSpeed
         {
@@ -102,9 +106,11 @@ namespace DigitRecognizer.ViewModel
             _painter = new BitmapPainter(_loader.Width, _loader.Height);
             OnPropertyChanged(nameof(PaintImage));
             _networkCreator = new NetworkCreator();
+
+            CreateDefaultNetwork();
         }
 
-        public void CreateDefaultNetwork()
+        private void CreateDefaultNetwork()
         {
             if (!CheckLearning()) return;
 
@@ -175,12 +181,14 @@ namespace DigitRecognizer.ViewModel
             if (!CheckInitialization()) return;
             if (!CheckLearning()) return;
 
-            UpdateParameters();
-            Task.Run(() => _teacher.Learn());
+            _learnCts = new CancellationTokenSource();
 
-            Task.Run(() =>
+            UpdateParameters();
+            _learnTask = Task.Run(() => _teacher.Learn(_learnCts.Token));
+
+            _progressBarTask = Task.Run(() =>
             {
-                while (_teacher.IsLearning)
+                while (!_learnCts.IsCancellationRequested)
                 {
                     OnPropertyChanged(nameof(TrainProgressValue));
                     Thread.Sleep(100);
@@ -192,7 +200,7 @@ namespace DigitRecognizer.ViewModel
         {
             if (!CheckInitialization()) return;
 
-            _teacher.StopLearn();
+            _learnCts.Cancel();
             OnPropertyChanged(nameof(TrainSetCount));
         }
 

@@ -15,3 +15,8 @@ Requirements:
 
 Screenshots:
 
+- Paint and recognize
+![Alt text](/screenshots/paint-recognize.png "Paint recognize")
+
+- Recognize mnist digits
+![Alt text](/screenshots/mnist-recognize.png "Mnist recognize")

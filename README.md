@@ -4,4 +4,5 @@ Handwriting digits recognition software based on [SimplePerceptron](https://gith
 
 Includes MNIST Database of Handwritten Digits for learning
 
-- Requirements: .Net Framework 4.6.1, WPF
+Requirements: 
+- Net Framework 4.6.1, WPF
